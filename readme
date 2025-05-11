@@ -1,0 +1,48 @@
+Bài tập về nhà
+Viết driver cho cảm biến màu TCS34725
+Thành viên: 
+Trần Vũ Minh Dũng MSSV 21146205
+Lê Tiến Phát MSSV 21146289
+* GIỚI THIỆU VỀ TCS34725:
+1. Thông tin chung về TCS34725
+Tên đầy đủ: TCS34725 RGB Color Sensor with IR Filter and White LED,là một cảm biến màu (color sensor) phổ biến do hãng AMS sản xuất. 
+2.ĐẶC ĐIỂM
+Đo màu chính xác: Nhờ tích hợp bộ lọc hồng ngoại, giúp loại bỏ nhiễu từ ánh sáng hồng ngoại.
+
+Tích hợp LED trắng: Hỗ trợ chiếu sáng đối tượng cần đo màu trong điều kiện thiếu sáng.
+
+ADC 16-bit: Cho độ phân giải cao, giúp đo cường độ màu chính xác hơn.
+
+Giao tiếp I2C: Giao tiếp dễ dàng với vi điều khiển như Arduino, ESP32, Raspberry Pi,...
+
+Dải điện áp hoạt động: 3.3V hoặc 5
+3. ỨNG DỤNG
+Robot dò đường theo màu
+
+Nhận dạng sản phẩm theo màu sắc
+
+Điều chỉnh đèn nền tự động theo ánh sáng/màu môi trường
+
+Tự động hóa trong công nghiệp để phân loại sản phẩm theo màu
+
+Bước 1: Kích hoạt giao tiếp I2C
+Interface Options → I2C → Enable
+Sau khi kích hoạt, khởi động lại thiết bị
+Bước 2: Biên dịch và nạp Kernel Module
+Tải module vào kernel:sudo insmod tcs34725_driver.ko
+Kiểm tra log khởi tạo:dmesg | grep TCS
+Sử dụng GCC để biên dịch chương trình:gcc -o tcs_user tcs_user.c
+Bước 3: Cấu hình Device Tree Overlay
+Biên dịch file overlay từ .dts sang .dtbo
+dtc -I dts -O dtb -o tcs34725.dtbo tcs34725-overlay.dts
+Di chuyển vào thư mục hệ thống:
+sudo cp tcs34725.dtbo /boot/overlays/
+Chỉnh sửa cấu hình khởi động:
+sudo nano /boot/config.txt
+Thêm dòng sau vào cuối file:
+dtoverlay=tcs34725
+Khởi động lại hệ thống để áp dụng
+Bước 4: Chạy chương trình kiểm thử
+sudo ./tcs_user
+Xoá file tạm sau khi biên dịch :make clean
+Gỡ module khỏi kernel:sudo rmmod tcs34725_driver
